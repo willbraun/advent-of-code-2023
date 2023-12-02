@@ -14,6 +14,8 @@ func main() {
 	part2()
 }
 
+// each row represents an elf grabbing several handfuls of colored cubes, separated by ";"
+// find the sum of the IDs of the rows where all handfuls are possible with 12 red, 13 green, and 14 blue cubes
 func part1() {
 	dataPath, err := filepath.Abs("./data.txt")
 	if err != nil {
@@ -69,6 +71,8 @@ games:
 	fmt.Println("Part 1:", sum)
 }
 
+// find the minimum number of cubes of each color required for each game
+// for each game multiply the counts together, and find the sum across all games
 func part2() {
 	dataPath, err := filepath.Abs("./data.txt")
 	if err != nil {

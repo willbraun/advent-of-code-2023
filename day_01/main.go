@@ -10,12 +10,6 @@ import (
 )
 
 func main() {
-	part1()
-	part2()
-}
-
-// find the sum of the two-digit numbers made from the first and last digit on each line
-func part1() {
 	dataPath, err := filepath.Abs("./data.txt")
 	if err != nil {
 		log.Fatal("Error getting current directory:", err)
@@ -29,7 +23,9 @@ func part1() {
 
 	text := string(data)
 	lines := strings.Split(text, "\n")
-	sum := 0
+
+	// Part 1 - find the sum of the two-digit numbers made from the first and last digit on each line
+	sum1 := 0
 
 	for _, line := range lines {
 		chars := strings.Split(line, "")
@@ -50,28 +46,13 @@ func part1() {
 			log.Fatal(err)
 		}
 
-		sum += num
+		sum1 += num
 	}
 
-	fmt.Println("Part 1:", sum)
-}
+	fmt.Println("Part 1:", sum1)
 
-// same as part 1, but include the spelled out numbers as digits
-func part2() {
-	dataPath, err := filepath.Abs("./data.txt")
-	if err != nil {
-		log.Fatal("Error getting current directory:", err)
-		return
-	}
-
-	data, err := os.ReadFile(dataPath)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	text := string(data)
-	lines := strings.Split(text, "\n")
-	sum := 0
+	// Part 2 - same as part 1, but include the spelled out numbers as digits
+	sum2 := 0
 
 	numberMap := map[string]string{
 		"one":   "1",
@@ -127,8 +108,8 @@ func part2() {
 			log.Fatal(err)
 		}
 
-		sum += num
+		sum2 += num
 	}
 
-	fmt.Println("Part 2:", sum)
+	fmt.Println("Part 2:", sum2)
 }

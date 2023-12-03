@@ -10,13 +10,6 @@ import (
 )
 
 func main() {
-	part1()
-	part2()
-}
-
-// each row represents an elf grabbing several handfuls of colored cubes, separated by ";"
-// find the sum of the IDs of the rows where all handfuls are possible with 12 red, 13 green, and 14 blue cubes
-func part1() {
 	dataPath, err := filepath.Abs("./data.txt")
 	if err != nil {
 		log.Fatal("Error getting current directory:", err)
@@ -30,6 +23,10 @@ func part1() {
 
 	text := string(data)
 	games := strings.Split(text, "\n")
+
+	// Part 1
+	// Each row represents an elf grabbing several handfuls of colored cubes, separated by ";"
+	// Find the sum of the IDs of the rows where all handfuls are possible with 12 red, 13 green, and 14 blue cubes
 	sum := 0
 
 	colorMap := map[string]int{
@@ -69,30 +66,16 @@ games:
 	}
 
 	fmt.Println("Part 1:", sum)
-}
 
-// find the minimum number of cubes of each color required for each game
-// for each game multiply the counts together, and find the sum across all games
-func part2() {
-	dataPath, err := filepath.Abs("./data.txt")
-	if err != nil {
-		log.Fatal("Error getting current directory:", err)
-		return
-	}
-
-	data, err := os.ReadFile(dataPath)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	text := string(data)
-	games := strings.Split(text, "\n")
-	sum := 0
+	// Part 2
+	// Find the minimum number of cubes of each color required for each game
+	// For each game, multiply the counts together, and find the sum across all games
+	sum2 := 0
 
 	for _, game := range games {
 		gameData := strings.Split(game, ":")[1]
 		rounds := strings.Split(gameData, ";")
-		maximums := make(map[string]int)
+		gameMaxes := make(map[string]int)
 
 		for _, round := range rounds {
 			numColorPairs := strings.Split(round, ",")
@@ -106,16 +89,16 @@ func part2() {
 					log.Fatal(err)
 				}
 
-				max, ok := maximums[color]
+				max, ok := gameMaxes[color]
 				if !ok || num > max {
-					maximums[color] = num
+					gameMaxes[color] = num
 				}
 			}
 		}
 
-		power := maximums["red"] * maximums["green"] * maximums["blue"]
-		sum += power
+		power := gameMaxes["red"] * gameMaxes["green"] * gameMaxes["blue"]
+		sum2 += power
 	}
 
-	fmt.Println("Part 2:", sum)
+	fmt.Println("Part 2:", sum2)
 }

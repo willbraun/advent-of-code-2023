@@ -6,7 +6,6 @@ import (
 	"math"
 	"os"
 	"path/filepath"
-	"slices"
 	"strconv"
 	"strings"
 )
@@ -36,19 +35,15 @@ func main() {
 	text := string(data)
 	lines := strings.Split(text, "\n")
 
-	// Part 1 - find the sum of all numbers adjacent (horizontally, verically, or diagonally) to a symbol (anything except a period).
-
-	// find all symbols
-	// check the 8 adjacent spots from the symbol
-	// if one is a number, track left and right until you find a period
-	// don't double count a number if it takes up more than 1 of the 8 spots
-	// add that number to the total
-
-	// get array of symbol coordinates
-	// get array of number coordinates - number, array of coordinates for each number
-	// loop through symbol coordinates, find number if
-
-	sum := 0
+	// Part 1 - Find the sum1 of all numbers adjacent (horizontally, verically, or diagonally) to a symbol (anything except a period).
+	// Part 2 - Gears are * that are adjacent to 2 numbers. Find the sum of the products of each gear's numbers.
+	sum1 := 0
+	sum2 := 0
+	symbolCoordinates := []coordinate{}
+	gearCoordinates := []coordinate{}
+	parts := []part{}
+	currNum := ""
+	currCoordinates := []coordinate{}
 
 	array := [][]string{}
 	for _, line := range lines {
@@ -56,24 +51,19 @@ func main() {
 		array = append(array, chars)
 	}
 
-	symbolCoordinates := []coordinate{}
-	parts := []part{}
-
-	currNum := ""
-	currCoordinates := []coordinate{}
-
 	for y, row := range array {
 		for x, char := range row {
-			if isSymbol(char) {
-				symbolCoordinates = append(symbolCoordinates, coordinate{x, y})
-			}
-
-			if isNumber(char) {
+			if strings.Contains("0123456789", char) {
 				currNum += char
 				currCoordinates = append(currCoordinates, coordinate{x: x, y: y})
+			} else if char != "." {
+				symbolCoordinates = append(symbolCoordinates, coordinate{x: x, y: y})
+				if char == "*" {
+					gearCoordinates = append(gearCoordinates, coordinate{x: x, y: y})
+				}
 			}
 
-			if !isNumber(char) || x == len(row)-1 {
+			if !strings.Contains("0123456789", char) || x == len(row)-1 {
 				if len(currNum) > 0 {
 					num, err := strconv.Atoi(currNum)
 					if err != nil {
@@ -87,25 +77,33 @@ func main() {
 		}
 	}
 
-	for _, part := range parts {
-		for _, symbol := range symbolCoordinates {
-			if isAdjacent(part, symbol) {
-				sum += part.num
+parts:
+	for _, p := range parts {
+		for _, s := range symbolCoordinates {
+			if isAdjacent(p, s) {
+				sum1 += p.num
+				continue parts
 			}
 		}
 	}
 
-	fmt.Println("Part 1:", sum)
-}
+	fmt.Println("Part 1:", sum1)
 
-func isSymbol(char string) bool {
-	notSymbols := []string{".", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9"}
-	return !slices.Contains(notSymbols, char)
-}
+	for _, g := range gearCoordinates {
+		gearParts := []part{}
+		for _, p := range parts {
+			if isAdjacent(p, g) {
+				gearParts = append(gearParts, p)
+			}
+		}
 
-func isNumber(char string) bool {
-	numbers := []string{"0", "1", "2", "3", "4", "5", "6", "7", "8", "9"}
-	return slices.Contains(numbers, char)
+		if len(gearParts) == 2 {
+			gearRatio := gearParts[0].num * gearParts[1].num
+			sum2 += gearRatio
+		}
+	}
+
+	fmt.Println("Part 2:", sum2)
 }
 
 func isAdjacent(part part, symbol coordinate) bool {
@@ -116,23 +114,3 @@ func isAdjacent(part part, symbol coordinate) bool {
 	}
 	return false
 }
-
-// func isAdjacent(part part, array [][]string) bool {
-// 	ring := []coordinate{}
-// 	for i, c := range part.coordinates {
-// 		ring = append(ring, coordinate{x: c.x, y: c.y - 1}, coordinate{x: c.x, y: c.y + 1})
-// 		if i == 0 {
-// 			ring = append(ring, coordinate{x: c.x - 1, y: c.y - 1}, coordinate{x: c.x - 1, y: c.y}, coordinate{x: c.x - 1, y: c.y + 1})
-// 		} else if i == len(part.coordinates)-1 {
-// 			ring = append(ring, coordinate{x: c.x + 1, y: c.y - 1}, coordinate{x: c.x + 1, y: c.y}, coordinate{x: c.x + 1, y: c.y + 1})
-// 		}
-// 	}
-
-// 	for _, c := range ring {
-// 		if c.x > -1 && c.x < len(array[0]) && c.y > -1 && c.y < len(array) && isSymbol(array[c.y][c.x]) {
-// 			return true
-// 		}
-// 	}
-
-// 	return false
-// }

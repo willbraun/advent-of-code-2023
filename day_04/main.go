@@ -28,6 +28,9 @@ func main() {
 	sum := float64(0)
 	lineCounts := make(map[int]int)
 
+	// Part 1 - Find total number of winning numbers. Card is "winning nums | my nums".
+	// Part 2 - Number of wins of card (X) makes a copy of X number of cards below it. Copies make copies based on wins also. Find total number of cards.
+
 	for _, line := range lines {
 		splitPipe := strings.Split(line, "|")
 		splitColon := strings.Split(splitPipe[0], ":")
